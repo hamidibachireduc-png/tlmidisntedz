@@ -4,23 +4,30 @@ import { PerformanceAnalytics } from './PerformanceAnalytics';
 import { 
   Users, 
   CalendarCheck2, 
-  CalendarDays,
+  CalendarDays, 
   BookOpen, 
   Award, 
   MessageSquare, 
   HeartHandshake, 
-  ArrowLeft,
+  ArrowLeft, 
   ShieldCheck, 
   Clock, 
   CheckCircle2, 
   AlertCircle, 
   Newspaper, 
   School, 
-  GraduationCap,
-  FileSpreadsheet,
-  Flag,
-  HardDriveDownload,
-  Video
+  GraduationCap, 
+  FileSpreadsheet, 
+  Flag, 
+  HardDriveDownload, 
+  Video,
+  Zap,
+  HelpCircle,
+  BrainCircuit,
+  Sparkles,
+  FileText,
+  Type,
+  Crown
 } from 'lucide-react';
 
 interface DashboardOverviewProps {
@@ -33,6 +40,7 @@ interface DashboardOverviewProps {
   onOpenSchoolSettings: () => void;
   calendarEvents?: CalendarEvent[];
   attendanceRecords?: AttendanceRecord[];
+  onOpenFontCustomizer?: () => void;
 }
 
 export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
@@ -45,6 +53,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
   onOpenSchoolSettings,
   calendarEvents = [],
   attendanceRecords = [],
+  onOpenFontCustomizer,
 }) => {
   const totalStudents = students.length;
   const pendingHomework = assignments.filter((a) => a.status === 'pending').length;
@@ -57,17 +66,14 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
     return parseFloat((sum / students.length).toFixed(2));
   }, [students]);
 
-  // Upcoming major calendar events
-  const upcomingEvents = calendarEvents.slice(0, 3);
-
   return (
-    <div className="space-y-6">
-      {/* Institution Customization Bar */}
-      <div className="bg-white rounded-3xl border border-slate-200/90 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div className="space-y-8 relative">
+      {/* Institution Customization Bar in Royal Algerian Style */}
+      <div className="dz-card-royal p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white/95 backdrop-blur-md">
         <div className="flex items-center gap-3.5">
           <div 
             onClick={onOpenSchoolSettings}
-            className="w-12 h-12 rounded-2xl overflow-hidden border border-amber-300 bg-white p-1 shrink-0 shadow-2xs cursor-pointer hover:border-emerald-600 transition-all flex items-center justify-center"
+            className="w-12 h-12 rounded-2xl overflow-hidden border-2 border-amber-400/50 bg-white p-1 shrink-0 shadow-2xs cursor-pointer hover:border-emerald-600 transition-all flex items-center justify-center"
             title="انقر لتغيير لوغو واسم المؤسسة"
           >
             <img
@@ -79,112 +85,129 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h3 className="font-extrabold text-slate-900 text-sm font-heading">
+              <h3 className="font-black text-slate-900 text-sm">
                 {schoolSettings.schoolName}
               </h3>
-              <span className="text-xs text-slate-400 font-semibold">·</span>
-              <span className="text-xs font-bold text-emerald-800">
+              <span className="text-xs text-amber-500 font-bold">●</span>
+              <span className="text-xs font-black text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
                 {schoolSettings.schoolType}
               </span>
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-slate-500 mt-0.5 font-medium">
               {schoolSettings.regionalDirectorate || 'مديرية التربية لولاية الجزائر (وسط)'} · {schoolSettings.ministryHeading || 'وزارة التربية الوطنية'}
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2.5 flex-wrap">
+          {onOpenFontCustomizer && (
+            <button
+              onClick={onOpenFontCustomizer}
+              className="dz-badge-gold px-3.5 py-2 text-xs font-black flex items-center gap-1.5 rounded-xl cursor-pointer hover:brightness-105 transition-all shadow-2xs"
+              title="تعديل نموذج الخط الاحترافي المعتمد"
+            >
+              <Type className="w-3.5 h-3.5 text-amber-900" />
+              <span>تعديل نموذج الخط الاحترافي</span>
+              <Crown className="w-3.5 h-3.5 text-amber-700" />
+            </button>
+          )}
+
           <button
             onClick={onOpenSchoolSettings}
-            className="px-3.5 py-1.5 text-xs font-bold bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-xl transition-all flex items-center gap-1.5 shadow-2xs"
+            className="px-3.5 py-2 text-xs font-bold flex items-center gap-1.5 rounded-xl border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition-colors shadow-2xs"
           >
-            <School className="w-3.5 h-3.5 text-red-700" />
-            <span>تخصيص لوغو وهوية المدرسة</span>
+            <School className="w-3.5 h-3.5 text-emerald-700" />
+            <span>شعار المؤسسة</span>
           </button>
         </div>
       </div>
 
-      {/* Hero Welcome Card - Algerian National & Royal Gold Palette */}
-      <div className="relative rounded-3xl overflow-hidden shadow-lg bg-slate-950 min-h-[340px] flex items-center border border-amber-500/30">
-        <img
-          src="/src/assets/images/syndicate_hero_banner_1794131595580.jpg"
-          alt="التعليم والتضامن النقابي"
-          className="absolute inset-0 w-full h-full object-cover opacity-35"
-          referrerPolicy="no-referrer"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-red-950/90 via-slate-950/80 to-emerald-950/60"></div>
+      {/* Hero Welcome Card in Royal Algerian Aesthetic (أخضر زمردي - ذهبي ملكي - أحمر ياقوتي) */}
+      <div className="rounded-3xl p-6 sm:p-10 relative overflow-hidden bg-gradient-to-br from-[#043e2e] via-[#008751] to-[#854d0e] text-white shadow-xl min-h-[320px] flex items-center border-2 border-amber-400/50">
+        {/* Subtle background abstract shapes */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-red-600/15 rounded-full blur-2xl pointer-events-none"></div>
 
-        <div className="relative z-10 p-6 sm:p-10 max-w-2xl space-y-4 text-white">
+        <div className="relative z-10 max-w-2xl space-y-4">
           <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="font-extrabold text-amber-300 flex items-center gap-1.5">
-              <ShieldCheck className="w-4 h-4 text-amber-300" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-black/25 text-amber-200 font-black border border-amber-400/40 backdrop-blur-xs">
+              <Crown className="w-3.5 h-3.5 text-amber-300" />
               النقابة الوطنية لعمال التربية (SNTE)
             </span>
-            <span className="text-slate-400">·</span>
-            <span className="font-bold text-emerald-200">
+            <span className="text-white/40">·</span>
+            <span className="font-extrabold text-white">
               {schoolSettings.schoolName}
             </span>
+            <span className="text-white/40">·</span>
+            <span className="text-amber-300 font-bold">دورة 2026</span>
           </div>
 
-          <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight font-heading">
-            مرحباً بك في منصة «تلميذي» للتواصل المدرسي والتأطير التربوي (إصلاحات 2026)
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight leading-tight">
+            مرحباً بك في منصة «تلميذي» للتواصل والتقويم البيداغوجي
           </h1>
 
-          <p className="text-xs sm:text-sm text-slate-200 leading-relaxed">
-            المنصة الذكية لرصد الغياب الفوري، متابعة الرزنامة المدرسية ومواعيد الامتحانات (BEM / BAC)، وحساب معدلات الفصول وفق مناشير وزارة التربية الوطنية مع حفظ خصوصية الأستاذ.
+          <p className="text-xs sm:text-sm text-emerald-100/90 leading-relaxed max-w-xl font-medium">
+            نظام تربوي متكامل بنسق ملكي وطني معتمد: رصد فوري للغياب، كويزات تقييمية مستوحاة من بنك امتحانات وفروض onec.edu.dz، ودروس دعم مباشرة عبر Google Meet.
           </p>
 
           <div className="pt-2 flex flex-wrap items-center gap-3">
             <button
-              onClick={() => onNavigateTab('calendar')}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-bold text-xs transition-all flex items-center gap-2 shadow-xs"
+              onClick={() => onNavigateTab('onec_bank')}
+              className="px-5 py-2.5 rounded-full bg-red-700 hover:bg-red-800 text-white font-black text-xs transition-all flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5 border border-red-500"
             >
-              <CalendarDays className="w-4 h-4 text-amber-300" />
-              <span>التقويم البيداغوجي والرزنامة</span>
+              <FileText className="w-4 h-4 text-white" />
+              <span>📚 بنك امتحانات onec.edu.dz (PDF)</span>
             </button>
+
             <button
-              onClick={() => onNavigateTab('attendance')}
-              className="px-4 py-2.5 rounded-xl bg-white/15 hover:bg-white/20 text-white font-bold text-xs transition-all flex items-center gap-2 border border-white/20 backdrop-blur-xs"
+              onClick={() => onNavigateTab('quizzes')}
+              className="px-5 py-2.5 rounded-full dz-btn-gold text-slate-950 font-black text-xs transition-all flex items-center gap-2 shadow-md hover:shadow-lg transform hover:-translate-y-0.5"
             >
-              <CalendarCheck2 className="w-4 h-4 text-emerald-300" />
-              <span>رصد الحضور الفوري</span>
+              <Zap className="w-4 h-4 text-amber-950" />
+              <span>بنك الكويزات التفاعلية</span>
             </button>
-            <button
-              onClick={() => onNavigateTab('grades')}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-extrabold text-xs transition-all flex items-center gap-2 shadow-xs"
-            >
-              <Award className="w-4 h-4 text-slate-950" />
-              <span>كشف النقط والرسم البياني</span>
-            </button>
+
+            {onOpenFontCustomizer && (
+              <button
+                onClick={onOpenFontCustomizer}
+                className="px-4 py-2.5 rounded-full dz-badge-gold text-slate-950 font-black text-xs transition-all flex items-center gap-1.5 shadow-md hover:brightness-105 active:scale-95 cursor-pointer"
+                title="تعديل نموذج الخط الاحترافي"
+              >
+                <Type className="w-4 h-4 text-amber-900" />
+                <span>نموذج الخط الاحترافي</span>
+              </button>
+            )}
+
             <button
               onClick={() => onNavigateTab('distance_tutoring')}
-              className="px-4 py-2.5 rounded-xl bg-red-700 hover:bg-red-800 text-white font-bold text-xs transition-all flex items-center gap-2 border border-red-500 shadow-xs"
+              className="px-4 py-2.5 rounded-full bg-white/15 hover:bg-white/25 text-white font-bold text-xs transition-all flex items-center gap-2 border border-white/20 backdrop-blur-xs"
             >
               <Video className="w-4 h-4 text-amber-300" />
-              <span>دروس الدعم عن بعد (Google Meet)</span>
+              <span>دروس الدعم عن بعد (Meet)</span>
             </button>
+
             <button
-              onClick={() => onNavigateTab('data_backup')}
-              className="px-4 py-2.5 rounded-xl bg-amber-600/90 hover:bg-amber-600 text-white font-bold text-xs transition-all flex items-center gap-2 border border-amber-400/50 backdrop-blur-xs"
+              onClick={() => onNavigateTab('calendar')}
+              className="px-4 py-2.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-xs transition-all flex items-center gap-2 border border-white/15 backdrop-blur-xs"
             >
-              <HardDriveDownload className="w-4 h-4 text-amber-200" />
-              <span>تصدير واستيراد وتفريغ البيانات</span>
+              <CalendarDays className="w-4 h-4 text-emerald-200" />
+              <span>الرزنامة المدرسية 2026</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* KPI Metrics Strip */}
+      {/* KPI Metrics Strip in Royal Algerian Style (Green, Gold & Red) */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
         <div 
           onClick={() => onNavigateTab('attendance')}
-          className="bg-white p-5 rounded-2xl border border-emerald-100 hover:border-emerald-500 shadow-xs cursor-pointer transition-all"
+          className="dz-card-royal p-5 cursor-pointer transition-all bg-white"
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">مواظبة الفوج</span>
-            <Users className="w-4 h-4 text-emerald-600" />
+            <span className="text-xs font-bold text-slate-700">مواظبة الفوج</span>
+            <Users className="w-4 h-4 text-emerald-700" />
           </div>
-          <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+          <div className="text-2xl font-black text-emerald-800 font-mono tabular-nums">
             94.5%
           </div>
           <p className="text-[11px] text-emerald-700 mt-1 font-bold">
@@ -193,50 +216,50 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         </div>
 
         <div 
-          onClick={() => onNavigateTab('calendar')}
-          className="bg-white p-5 rounded-2xl border border-amber-100 hover:border-amber-500 shadow-xs cursor-pointer transition-all"
+          onClick={() => onNavigateTab('quizzes')}
+          className="dz-card-royal p-5 cursor-pointer transition-all bg-white"
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">الرزنامة المدرسية</span>
-            <CalendarDays className="w-4 h-4 text-amber-600" />
+            <span className="text-xs font-bold text-slate-700">كويزات onec</span>
+            <Zap className="w-4 h-4 text-amber-600" />
           </div>
-          <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
-            15 نوفمبر
+          <div className="text-2xl font-black text-amber-700 font-mono tabular-nums">
+            100%
           </div>
           <p className="text-[11px] text-amber-800 mt-1 font-bold">
-            انطلاق الفروض المحروسة
+            تصحيح آلي فوري وشرح نموذجي
           </p>
         </div>
 
         <div 
           onClick={() => onNavigateTab('grades')}
-          className="bg-white p-5 rounded-2xl border border-red-100 hover:border-red-500 shadow-xs cursor-pointer transition-all"
+          className="dz-card-royal p-5 cursor-pointer transition-all bg-white"
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">المعدل العام الفصلي</span>
-            <Award className="w-4 h-4 text-red-600" />
+            <span className="text-xs font-bold text-slate-700">المعدل العام الفصلي</span>
+            <Award className="w-4 h-4 text-amber-600" />
           </div>
-          <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+          <div className="text-2xl font-black text-slate-900 font-mono tabular-nums">
             {classAvg > 0 ? classAvg : (sampleStudent?.currentAverage ?? '16.85')}
             <span className="text-xs font-normal text-slate-400">/20</span>
           </div>
-          <p className="text-[11px] text-red-700 mt-1 font-bold">
+          <p className="text-[11px] text-amber-800 mt-1 font-bold">
             {classAvg >= 16 ? 'رتبة امتياز في الفوج' : classAvg >= 10 ? 'فوق المعدل البيداغوجي' : 'تحت المتابعة البيداغوجية'}
           </p>
         </div>
 
         <div 
           onClick={() => onNavigateTab('homework')}
-          className="bg-white p-5 rounded-2xl border border-slate-200 hover:border-emerald-500 shadow-xs cursor-pointer transition-all"
+          className="dz-card-royal p-5 cursor-pointer transition-all bg-white"
         >
           <div className="flex items-center justify-between text-slate-500 mb-2">
-            <span className="text-xs font-semibold">الواجبات المفتوحة</span>
-            <BookOpen className="w-4 h-4 text-slate-600" />
+            <span className="text-xs font-bold text-slate-700">الواجبات المفتوحة</span>
+            <BookOpen className="w-4 h-4 text-red-600" />
           </div>
-          <div className="text-2xl font-extrabold text-slate-900 font-mono tabular-nums">
+          <div className="text-2xl font-black text-red-700 font-mono tabular-nums">
             {pendingHomework}
           </div>
-          <p className="text-[11px] text-slate-500 mt-1">
+          <p className="text-[11px] text-slate-500 mt-1 font-medium">
             موعد التسليم الأقرب: 10 نوفمبر
           </p>
         </div>
@@ -251,94 +274,94 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
         onNavigateTab={onNavigateTab}
       />
 
-      {/* Feature Highlights Bento Grid */}
+      {/* Feature Highlights Bento Grid in Royal Algerian Palette (Red, Green & Gold) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         
-        {/* Card 1: Interactive Pedagogical Calendar */}
+        {/* Card 1: onec.edu.dz Engine & Quizzes (Red & Gold) */}
         <div 
-          onClick={() => onNavigateTab('calendar')}
-          className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:border-emerald-500 transition-all cursor-pointer flex flex-col justify-between space-y-4"
+          onClick={() => onNavigateTab('onec_bank')}
+          className="dz-card-royal p-6 cursor-pointer hover:border-red-500/50 transition-all bg-white flex flex-col justify-between space-y-4"
         >
           <div className="space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-800 flex items-center justify-center font-bold">
-              <CalendarDays className="w-5 h-5 text-emerald-700" />
+            <div className="w-10 h-10 rounded-2xl bg-red-50 text-red-700 flex items-center justify-center font-bold border border-red-200">
+              <FileText className="w-5 h-5 text-red-600" />
             </div>
-            <h3 className="font-extrabold text-slate-900 text-base font-heading">
-              التقويم البيداغوجي والرزنامة المدرسية
+            <h3 className="font-black text-slate-900 text-base">
+              بنك امتحانات وفروض onec.edu.dz (PDF)
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              عرض شهري تفاعلي شامل لرزنامة العطل الرسمية المدرسية، مواعيد الفروض المحروسة، اختبارات الفصول، وامتحانات BEM و BAC مع إمكانية إضافة ملاحظات الأستاذ وتصدير الرزنامة للطباعة.
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+              أكبر مكتبة رقمية لمواضيع وحوليات شهادة التعليم المتوسط (BEM) والبكالوريا (BAC) مع التصحيح الوزاري المعتمد وسلم التنقيط.
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-700">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-red-700">
+            <span>تصفح بنك الامتحانات والفروض</span>
+            <ArrowLeft className="w-3.5 h-3.5" />
+          </div>
+        </div>
+
+        {/* Card 2: Interactive Pedagogical Calendar (Emerald & Gold) */}
+        <div 
+          onClick={() => onNavigateTab('calendar')}
+          className="dz-card-royal p-6 cursor-pointer hover:border-emerald-500/50 transition-all bg-white flex flex-col justify-between space-y-4"
+        >
+          <div className="space-y-3">
+            <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-800 flex items-center justify-center font-bold border border-emerald-200">
+              <CalendarDays className="w-5 h-5 text-emerald-700" />
+            </div>
+            <h3 className="font-black text-slate-900 text-base">
+              التقويم البيداغوجي والرزنامة 2026
+            </h3>
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+              عرض شهري تفاعلي شامل لرزنامة العطل الرسمية المدرسية، مواعيد الفروض المحروسة، اختبارات الفصول، وامتحانات BEM و BAC مع إمكانية إضافة ملاحظات الأستاذ.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-800">
             <span>فتح التقويم الشهري التفاعلي</span>
             <ArrowLeft className="w-3.5 h-3.5" />
           </div>
         </div>
 
-        {/* Card 2: Attendance & Safe Messaging */}
+        {/* Card 3: Distance Tutoring with Google Meet (Royal Gold & Emerald) */}
         <div 
-          onClick={() => onNavigateTab('attendance')}
-          className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs hover:border-emerald-500 transition-all cursor-pointer flex flex-col justify-between space-y-4"
+          onClick={() => onNavigateTab('distance_tutoring')}
+          className="dz-card-royal p-6 cursor-pointer hover:border-amber-500/50 transition-all bg-white flex flex-col justify-between space-y-4"
         >
           <div className="space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-red-100 text-red-800 flex items-center justify-center font-bold">
-              <CalendarCheck2 className="w-5 h-5 text-red-700" />
+            <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-800 flex items-center justify-center font-bold border border-amber-200">
+              <Video className="w-5 h-5 text-amber-700" />
             </div>
-            <h3 className="font-extrabold text-slate-900 text-base font-heading">
-              رصد الحضور والمراسلات الآمنة
+            <h3 className="font-black text-slate-900 text-base">
+              دروس الدعم عن بعد (Google Meet)
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              تسجيل الحضور الفوري وإشعار أولياء التلاميذ تلقائياً عبر فضاء الأولياء دون إظهار رقم الهاتف الشخصي للأستاذ، مع رسائل صوتية مشفرة.
+            <p className="text-xs text-slate-600 leading-relaxed font-medium">
+              حصص دعم تفاعلية بالسبورة الرقمية عبر تقنية Google Meet تحت إشراف أساتذة معتمدين من النقابة الوطنية لعمال التربية (SNTE).
             </p>
           </div>
 
-          <div className="flex items-center gap-1.5 text-xs font-bold text-red-700">
-            <span>فتح سجل الغياب والحضور</span>
-            <ArrowLeft className="w-3.5 h-3.5" />
-          </div>
-        </div>
-
-        {/* Card 3: Syndicate Solidarity & Exam Bank */}
-        <div 
-          onClick={() => onNavigateTab('syndicate')}
-          className="bg-gradient-to-br from-amber-50/60 to-orange-50/60 rounded-3xl border border-amber-300/80 p-6 shadow-xs hover:border-amber-400 transition-all cursor-pointer flex flex-col justify-between space-y-4"
-        >
-          <div className="space-y-3">
-            <div className="w-10 h-10 rounded-2xl bg-amber-500 text-slate-950 flex items-center justify-center font-bold">
-              <HeartHandshake className="w-5 h-5 text-slate-950" />
-            </div>
-            <h3 className="font-extrabold text-slate-900 text-base font-heading">
-              فضاء النقابة والدعم التضامني
-            </h3>
-            <p className="text-xs text-slate-700 leading-relaxed">
-              دروس تقوية ودعم مدرسي مجانية بإشراف أساتذة النقابة المتطوعين، وبنك حوليات شهادتي التعليم المتوسط (BEM) والبكالوريا (BAC) المفتوحة لجميع التلاميذ.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs font-extrabold text-amber-900">
-            <span>استكشاف برامج الدعم والامتحانات</span>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-amber-800">
+            <span>الانضمام إلى دروس Google Meet</span>
             <ArrowLeft className="w-3.5 h-3.5" />
           </div>
         </div>
       </div>
 
-      {/* Classroom Quick Preview & Educational Union Message */}
+      {/* Classroom Snapshot and Educational Union Message */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
-        {/* Left 2 Cols: Classroom Snapshot */}
-        <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs space-y-4">
+        {/* Classroom Snapshot */}
+        <div className="lg:col-span-2 dz-card-royal p-6 space-y-4 bg-white">
           <div className="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-              <h3 className="font-extrabold text-slate-900 text-sm font-heading">
+              <h3 className="font-black text-slate-900 text-sm">
                 تلاميذ الفوج (السنة الرابعة متوسط 4م2 - تحضير BEM) · {schoolSettings.schoolName}
               </h3>
-              <p className="text-xs text-slate-500">حالة المتابعة والتقويم البيداغوجي المستمر</p>
+              <p className="text-xs text-slate-500 font-medium">حالة المتابعة والتقويم البيداغوجي المستمر</p>
             </div>
             <button
               onClick={() => onNavigateTab('attendance')}
-              className="text-xs font-bold text-emerald-700 hover:text-emerald-900"
+              className="text-xs font-bold text-emerald-800 hover:text-emerald-900"
             >
               عرض الكل
             </button>
@@ -353,7 +376,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
               students.slice(0, 4).map((student) => (
                 <div key={student.id} className="py-3 flex items-center justify-between text-xs">
                   <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-slate-100 font-bold text-slate-700 flex items-center justify-center">
+                    <div className="w-9 h-9 rounded-full bg-emerald-50 font-bold text-emerald-800 flex items-center justify-center border border-emerald-200">
                       {(student.name || 'ت').slice(0, 2)}
                     </div>
                     <div>
@@ -363,10 +386,10 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
                   </div>
 
                   <div className="flex items-center gap-3">
-                    <span className="font-mono font-bold text-emerald-800 tabular-nums text-sm">
+                    <span className="font-mono font-bold text-amber-700 tabular-nums text-sm">
                       {student.currentAverage ?? 0} / 20
                     </span>
-                    <span className="text-[11px] text-emerald-700 font-bold">
+                    <span className="text-[11px] text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
                       مواظب
                     </span>
                   </div>
@@ -376,16 +399,22 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </div>
         </div>
 
-        {/* Right 1 Col: Educational Union Solidarity Box */}
-        <div className="bg-gradient-to-br from-red-900 via-red-950 to-slate-950 text-white rounded-3xl p-6 shadow-xs flex flex-col justify-between space-y-4 border border-amber-500/30">
-          <div className="space-y-3">
-            <span className="text-xs text-amber-300 font-bold uppercase tracking-wider block">
+        {/* Educational Union Solidarity Box */}
+        <div 
+          className="p-6 rounded-3xl text-white flex flex-col justify-between space-y-4 border-2 border-amber-400/50 shadow-lg relative overflow-hidden"
+          style={{
+            backgroundColor: '#064e3b',
+            backgroundImage: 'linear-gradient(135deg, #033224 0%, #008751 50%, #854d0e 100%)',
+          }}
+        >
+          <div className="space-y-3 relative z-10">
+            <span className="text-xs text-amber-300 font-black uppercase tracking-wider block">
               رسالة النقابة الوطنية لعمال التربية (SNTE)
             </span>
-            <h4 className="font-black text-base leading-snug font-heading">
+            <h4 className="font-black text-base leading-snug">
               المدرسة الجزائرية العمومية وتكافؤ الفرص حق دستوري لكل تلميذ
             </h4>
-            <p className="text-xs text-slate-200 leading-relaxed">
+            <p className="text-xs text-emerald-100/90 leading-relaxed font-medium">
               تنظم النقابة سلسلة مراجعات الدعم والتقوية المجانية تحضيراً لامتحان شهادة التعليم المتوسط (BEM) وشهادة البكالوريا (BAC)، لمرافقة أبناء الشعب والتصدي للتسرب المدرسي.
             </p>
           </div>
@@ -393,7 +422,7 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           <div className="pt-2">
             <button
               onClick={() => onNavigateTab('syndicate')}
-              className="w-full py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black text-xs hover:from-amber-600 hover:to-amber-700 transition-all shadow-xs"
+              className="w-full py-2.5 rounded-full dz-btn-gold text-slate-950 font-black text-xs transition-all shadow-md"
             >
               استكشاف برامج الدعم المجاني
             </button>

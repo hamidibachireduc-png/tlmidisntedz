@@ -1,4 +1,58 @@
-export type UserRole = 'teacher' | 'parent_student' | 'syndicate_admin';
+export type UserRole = 'admin' | 'teacher' | 'parent' | 'secretary' | 'parent_student' | 'syndicate_admin';
+
+export interface AppUser {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  role: 'admin' | 'teacher' | 'parent' | 'secretary';
+  avatarUrl?: string;
+  title: string;
+  assignedStudentIds?: string[]; // For parents: which students are their children
+  assignedClasses?: string[]; // For teachers: which groups they teach
+  status: 'active' | 'suspended';
+  createdAt: string;
+  lastLogin?: string;
+  password?: string;
+}
+
+export type PaymentStatus = 'paid' | 'partial' | 'unpaid' | 'overdue';
+
+export interface FeeReceipt {
+  id: string;
+  receiptNumber: string;
+  studentId: string;
+  studentName: string;
+  classRoom: string;
+  guardianName: string;
+  guardianPhone: string;
+  amount: number; // المبلغ المسدد بالدينار الجزائري (DZD)
+  totalDue: number; // المبلغ الإجمالي المطلوب (DZD)
+  remainingAmount: number; // المبلغ المتبقي (DZD)
+  month: string; // e.g. "نوفمبر 2026"
+  subject: string; // e.g. "دروس دعم الرياضيات والفيزياء (4م2)"
+  paymentMethod: 'cash' | 'baridimob' | 'ccp' | 'bank_card';
+  paymentDate: string;
+  receivedBy: string; // اسم السكرتيرة / أمين الصندوق
+  status: PaymentStatus;
+  notes?: string;
+}
+
+export interface StudentFeeSummary {
+  studentId: string;
+  studentName: string;
+  registrationNumber: string;
+  classRoom: string;
+  guardianName: string;
+  guardianPhone: string;
+  monthlyFee: number;
+  paidAmount: number;
+  remainingAmount: number;
+  status: PaymentStatus;
+  month: string;
+  lastPaymentDate?: string;
+  lastReceiptNumber?: string;
+}
 
 export type EducationalLevel = 
   | 'السنة الرابعة متوسط (شهادة التعليم المتوسط BEM)'
@@ -51,7 +105,37 @@ export interface AttendanceRecord {
   status: AttendanceStatus;
   subject: Subject;
   notifiedParent: boolean;
+  notifiedViaWhatsApp?: boolean;
+  notifiedViaSms?: boolean;
+  justificationId?: string;
   notes?: string;
+}
+
+export type JustificationReasonType = 
+  | 'medical_certificate' 
+  | 'family_emergency' 
+  | 'hospital_visit' 
+  | 'prior_notice' 
+  | 'other';
+
+export interface AbsenceJustification {
+  id: string;
+  studentId: string;
+  studentName: string;
+  guardianName: string;
+  guardianPhone: string;
+  date: string;
+  timeSlot: string;
+  subject: Subject | string;
+  reasonType: JustificationReasonType;
+  reasonLabel: string;
+  details: string;
+  attachedDocumentName?: string;
+  attachedDocumentUrl?: string;
+  status: 'pending' | 'accepted' | 'rejected';
+  submittedAt: string;
+  reviewedAt?: string;
+  reviewerNotes?: string;
 }
 
 export interface HomeworkAssignment {
@@ -230,3 +314,96 @@ export interface GoogleMeetTutoringSession {
   maxParticipants: number;
   isStudentEnrolled?: boolean;
 }
+
+// National Exams & Interactive Auto-Corrected Quizzes
+export interface QuizQuestion {
+  id: string;
+  questionText: string;
+  options: string[];
+  correctOptionIndex: number;
+  explanation: string;
+  points: number;
+  sourceExamInfo?: string;
+}
+
+export interface QuizAssessment {
+  id: string;
+  title: string;
+  subject: Subject;
+  level: string;
+  examSource?: string;
+  examSourceDzExams?: string;
+  examSourceNationalExams?: string;
+  timeLimitMinutes: number;
+  totalScore: number;
+  questions: QuizQuestion[];
+  teacherName: string;
+  teacherId?: string;
+  pdfAttachmentUrl?: string;
+  pdfSolutionUrl?: string;
+  linkedLessonTitle?: string;
+  createdAt: string;
+  completionsCount: number;
+  averageScore?: number;
+}
+
+export interface QuizSubmission {
+  id: string;
+  quizId: string;
+  quizTitle: string;
+  studentId: string;
+  studentName: string;
+  answers: Record<string, number>;
+  score: number;
+  totalScore: number;
+  percentage: number;
+  timeSpentSeconds: number;
+  submittedAt: string;
+  savedToGrades: boolean;
+}
+
+export interface NationalExamResource {
+  id: string;
+  title: string;
+  subject: Subject;
+  level: string;
+  year: string;
+  term: 'الفصل الأول' | 'الفصل الثاني' | 'الفصل الثالث' | 'امتحان رسمي (BEM)' | 'امتحان رسمي (BAC)' | 'امتحان تجريبي';
+  institution: string;
+  downloadUrl: string;
+  solutionUrl?: string;
+  fileSizeBytes: string;
+  downloadsCount: number;
+  sampleQuestions: QuizQuestion[];
+  hasCorrection?: boolean;
+  pagesCount?: number;
+  description?: string;
+  examPaperText?: string;
+  modelAnswerText?: string;
+  examType?: 'فروض' | 'اختبارات' | 'امتحانات رسمية' | 'تمارين وسلاسل';
+}
+
+export type DzExamResource = NationalExamResource;
+
+export type ArabicFontFamily = 
+  | 'Cairo' 
+  | 'Readex Pro' 
+  | 'Amiri' 
+  | 'Tajawal' 
+  | 'Almarai' 
+  | 'Alexandria';
+
+export type FontScale = 'normal' | 'comfortable' | 'large';
+export type FontWeightPreference = 'normal' | 'medium' | 'bold';
+
+export interface FontSettings {
+  family: ArabicFontFamily;
+  scale: FontScale;
+  weight: FontWeightPreference;
+}
+
+export const DEFAULT_FONT_SETTINGS: FontSettings = {
+  family: 'Cairo',
+  scale: 'normal',
+  weight: 'normal',
+};
